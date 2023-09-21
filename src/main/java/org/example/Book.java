@@ -16,4 +16,23 @@ public class Book {
         this.title = title;
         this.status = status;
     }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String convertToWrite() {
+
+        return String.format("%s,%s,%s,%s", isbn, author, title, status);
+
+    }
+
+    @Override
+    public String toString() {
+        return
+                "ISBN: " + isbn + '\'' +
+                ", AUTHOR: " + author + '\'' +
+                ", TITLE: " + title + '\'' +
+                ", STATUS: " + status ;
+    }
 }
