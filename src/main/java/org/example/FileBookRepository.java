@@ -16,40 +16,48 @@ public class FileBookRepository implements BookRepository {
 
     @Override
     public void saveBook(Book book) {
+            PrintWriter pw = null;
         try {
-            PrintWriter pw = new PrintWriter(new FileWriter(fileName,true));
-
-            String saveBookInformation = book.convertToWrite();
+            pw = new PrintWriter(new FileWriter(fileName,true));
+            String saveBookInformation = book.convertBookToSave();
             pw.println(saveBookInformation);
-
-            pw.close();
         } catch (IOException e) {
             System.out.println("File isn't exist");
+        }finally {
+            if(pw != null) {
+                pw.close();
+            }
         }
     }
 
     @Override
     public List<Book> getAllBooks() {
+        Scanner scanner = null;
         List<Book> listOfAllBooks = new ArrayList<>();
         try {
-            Scanner scanner = new Scanner(new File(fileName));
+            scanner = new Scanner(new File(fileName));
             while (scanner.hasNext()) {
-                String readBooksInFile = scanner.nextLine();
-                Book book = bookInfoConverter(readBooksInFile);
-                if (book != null) {
+                String line = scanner.nextLine();
+                List<Book> books = convertToBook(line);
 
-                    listOfAllBooks.add(book);
-                }
+                listOfAllBooks.addAll(books);
             }
-            scanner.close();
+
         } catch (FileNotFoundException e) {
             System.out.println("File isn't exist");
+
+        }finally {
+            if(scanner != null){
+                scanner.close();
+
+            }
         }
 
         return listOfAllBooks;
     }
 
-    private Book bookInfoConverter(String bookInfo) {
+    private List<Book> convertToBook(String bookInfo) {
+        List<Book> books = new ArrayList<>();
 
         String[] informationAboutBook = bookInfo.split(",");
 
@@ -61,11 +69,9 @@ public class FileBookRepository implements BookRepository {
 
             Status status = checkStatus(statusStr);
 
-            return new Book(isbn, author, title, status);
+            books.add(new Book(isbn,author,title,status));
         }
-
-        return null;
-
+        return books;
     }
 
     private Status checkStatus(String informationAboutStatus) {

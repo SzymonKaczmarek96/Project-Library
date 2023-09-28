@@ -1,6 +1,5 @@
 package org.example;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Library  {
@@ -20,8 +19,8 @@ public class Library  {
         }
     }
 
-    public void addBooksToRepository(Book book) {
-        if (!isExist(book)) {
+    public void addBookToRepository(Book book) {
+        if (!exists(book)) {
             bookRepository.saveBook(book);
             System.out.println("Added");
         } else {
@@ -29,7 +28,7 @@ public class Library  {
         }
     }
 
-    public boolean isExist(Book book) {
+    public boolean exists(Book book) {
         for(Book checkExistingBook : bookRepository.getAllBooks()){
             if(checkExistingBook.getIsbn().equals(book.getIsbn())){
                 return true;
@@ -37,6 +36,7 @@ public class Library  {
         };
         return false;
     }
+
 
 
 

@@ -4,13 +4,7 @@ package org.example;
 
 public class Main {
     public static void main(String[] args) {
-        Library library = new Library();
-
-
-        Application app = new Application();
-
-
-        app.mainApplication();
-
+        MainApplication app = new MainApplication();
+        app.startApp();
     }
 }
