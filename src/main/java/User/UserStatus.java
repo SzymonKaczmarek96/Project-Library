@@ -1,4 +1,4 @@
-package org.example;
+package User;
 
 public enum UserStatus {
 

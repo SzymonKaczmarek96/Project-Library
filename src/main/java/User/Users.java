@@ -1,10 +1,8 @@
-package org.example;
+package User;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Users {
@@ -23,7 +21,7 @@ public class Users {
     private final String fileName = "src/main/resources/Users.txt";
 
     public Users(String login, String pass, String firstName, String lastName) {
-        this.id = generateId();
+        this.id = generateId(readFileToGenerateId());
         this.login = login.toLowerCase();
         this.pass = pass.toLowerCase();
         this.firstName = firstName.toUpperCase();
@@ -31,29 +29,38 @@ public class Users {
         this.userStatus = UserStatus.STUDENT;
     }
 
-    public int generateId(){
-        return readFileToGenerateId().size() + 1;
+    public int generateId(List<Integer> numberId){
+
+        Set<Integer> checkTheSmallestNumber = new HashSet<>(numberId);
+        int n = numberId.size() + 1;
+        for (int i = 1; i <=n;i++){
+            if(!checkTheSmallestNumber.contains(i)){
+                return i;
+            }
+        }
+        return n + 1;
     }
 
     private List<Integer> readFileToGenerateId() {
-        Scanner scanner = null;
         List<Integer> idList = new ArrayList<>();
-        try  {
-            scanner = new Scanner(new File(fileName));
+        try(Scanner scanner = new Scanner(new File(fileName)))  {
+            ;
             while (scanner.hasNext()) {
                 String idInfo = scanner.nextLine();
-                int idIntoList = checkIdInFile(idInfo);
-                idList.add(idIntoList);
+                if(idInfo.isEmpty()){
+                 continue;
+                }else {
+                    int idIntoList = checkIdInFile(idInfo);
+                    idList.add(idIntoList);
+                }
+
             }
         } catch (FileNotFoundException e) {
             System.out.println("File isn't exist");
-        }finally {
-            if(scanner != null) {
-                scanner.close();
-            }
         }
         return idList;
-    }
+        }
+
 
     private int checkIdInFile(String idInformation) {
         int userIdIntoList = 0;
@@ -63,6 +70,10 @@ public class Users {
             userIdIntoList = Integer.parseInt(userId);
         }
         return userIdIntoList;
+    }
+
+    public String convertUserToSave(){
+        return String.format("%s,%s,%s,%s,%s,%s",id,login,pass,firstName,lastName,userStatus);
     }
 
     @Override
