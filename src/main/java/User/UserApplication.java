@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 
-// ToDo : create list to add new users to file.txt.
 public class UserApplication {
 
     private UserLoginValidation userLoginValidation;
