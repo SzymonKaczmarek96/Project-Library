@@ -1,6 +1,5 @@
 package org.example;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Library  {
@@ -10,7 +9,7 @@ public class Library  {
     private BookRepository bookRepository ;
 
     public Library() {
-        this.bookRepository = new FileBookRepository();
+        this.bookRepository = new FileBookRepository("C:\\Users\\szymo\\IdeaProjects\\library\\src\\main\\resources\\BookRepository.txt");
         this.booksList = bookRepository.getAllBooks();
     }
 
@@ -20,18 +19,25 @@ public class Library  {
         }
     }
 
-    public void addBooksToReposiroty(Book book) {
-        if (!isExist(book)) {
+    public void addBookToRepository(Book book) {
+        if (!exists(book)) {
             bookRepository.saveBook(book);
             System.out.println("Added");
         } else {
-            System.out.println("");
+            System.out.println("Such a book is in the repository");
         }
     }
 
-    public boolean isExist(Book book) {
-
-        return true;
+    public boolean exists(Book book) {
+        for(Book checkExistingBook : bookRepository.getAllBooks()){
+            if(checkExistingBook.getIsbn().equals(book.getIsbn())){
+                return true;
+            }
+        };
+        return false;
     }
+
+
+
 
 }
