@@ -17,16 +17,17 @@ public class MainApplication {
     }
 
     public void startApp() {
-
         Scanner scanner = new Scanner(System.in);
-        try{
+
         while (!start) {
             displayMenu();
-            userChoice(scanner);
+
+            String numberChoice = scanner.nextLine();
+            userChoice(numberChoice);
         }
-        }finally {
-            scanner.close();
-        }
+
+        scanner.close();
+
     }
         private void displayMenu() {
             System.out.println("1. Display all books"); // wyświetl wszystkie dostępne książki
@@ -39,14 +40,20 @@ public class MainApplication {
             System.out.println("8. Exit"); // Zamykanie programu.
         }
 
-        private void userChoice( Scanner scanner) {
+        private void userChoice(String choice) {
             Library library = new Library();
-            String numberChoice = scanner.nextLine();
+
             try {
-                if (numberChoice.equals("1")) {
+                if (choice.equals("1")) {
                     library.displayBooks();
                 }
-                if (numberChoice.equals("8")) {
+                if(choice.equals("3")){
+                    library.borrow();
+                }
+                if(choice.equals("5")){
+                    library.displayRentalBook();
+                }
+                if (choice.equals("8")) {
                     System.out.println("Program will be a closed");
                     start = true;
                 }else {

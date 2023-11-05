@@ -18,13 +18,12 @@ public class UserApplication {
         this.userRegistrationHandler = new UserRegistrationHandler();
     }
 
-    public void registerUser() {
+    public void registerUser(String registerUsername,String password) {
         Scanner scanner = new Scanner(System.in);
-        introduceUserData(scanner);
+        introduceUserData(registerUsername,password);
         if(userRegistrationHandler.checkLogin(getUsername()) && userRegistrationHandler.checkPassword(getPassword())){
             System.out.println("First name: ");
             String firstName = scanner.nextLine().toUpperCase();
-
             System.out.println("Last name: ");
             String lastName = scanner.nextLine().toUpperCase();
             Users users = new Users(getUsername(),getPassword(),firstName,lastName);
@@ -33,12 +32,10 @@ public class UserApplication {
         }else {
             System.out.println("Login or password don't make conditions");
         }
-        scanner.close();
     }
 
-    public boolean loginUser() {
-        Scanner scanner = new Scanner(System.in);
-        introduceUserData(scanner);
+    public boolean loginUser(String username,String password) {
+        introduceUserData(username,password);
         if(userLoginValidation.checkLogin(getUsername())){
             if(userLoginValidation.checkPassword(getUsername(),getPassword())){
                 System.out.println("Login and password correct");
@@ -47,19 +44,12 @@ public class UserApplication {
             }
         }
         System.out.println("Error, login or password is incorrect");
-        scanner.close();
         return false;
     }
 
 
-    private void introduceUserData(Scanner scanner){
+    private void introduceUserData(String username, String password){
         loginAndPasswordList = new ArrayList<>();
-
-        System.out.println("Login: ");
-        String username = scanner.nextLine().toLowerCase();
-
-        System.out.println("Password: ");
-        String password = scanner.nextLine().toLowerCase();
 
         loginAndPasswordList.add(username);
         loginAndPasswordList.add(password);
@@ -74,7 +64,5 @@ public class UserApplication {
         String password = loginAndPasswordList.get(1);
         return password;
     }
-
-
 
 }

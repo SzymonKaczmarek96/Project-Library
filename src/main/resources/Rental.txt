@@ -1,0 +1,3 @@
+123456781,J.R.R Tolkien,Lord of the rings,BORROWED,1,Szymon,Kaczmarek,2023-10-07
+123456789,J.R.R Tolkien,Lord of the rings,BORROWED,1,SZYMON,KACZMAREK,2023-11-05
+123456780,J.R.R Tolkien,Lord of the rings,BORROWED,2,ANDRZEJ,NOWAK,2023-11-05

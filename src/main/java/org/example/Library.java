@@ -1,5 +1,7 @@
 package org.example;
 
+import BorrowBook.FileRentalBookRepository;
+
 import java.util.List;
 
 public class Library  {
@@ -8,9 +10,12 @@ public class Library  {
 
     private BookRepository bookRepository ;
 
+    private FileRentalBookRepository fileRentalBookRepository;
+
     public Library() {
         this.bookRepository = new FileBookRepository("C:\\Users\\szymo\\IdeaProjects\\library\\src\\main\\resources\\BookRepository.txt");
         this.booksList = bookRepository.getAllBooks();
+        this.fileRentalBookRepository = new FileRentalBookRepository();
     }
 
     public void displayBooks() {
@@ -35,6 +40,14 @@ public class Library  {
             }
         };
         return false;
+    }
+
+    public void borrow() {
+      fileRentalBookRepository.saveBorrowedBooks();
+    }
+
+    public void displayRentalBook() {
+        fileRentalBookRepository.viewsBorrowedBooks();
     }
 
 
