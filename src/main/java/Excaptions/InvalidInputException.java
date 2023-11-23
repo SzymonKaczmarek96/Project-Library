@@ -1,4 +1,4 @@
-package FileException;
+package Excaptions;
 
 public class InvalidInputException extends Exception {
 

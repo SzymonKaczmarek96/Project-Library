@@ -1,49 +1,37 @@
-package BorrowBook;
+package Repositories;
 
-import User.Users;
-import org.example.Book;
-import org.example.FileBookRepository;
-import org.example.Status;
+import Model.Book;
+import Model.Status;
+import Model.User;
+import Services.BookSelection;
+import Services.RentalInfo;
+import Services.UpdateBookStatus;
+import Services.UserAuthentication;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
-//ToDo : : ID-ksiązki|title|author|borrower-id|borrower-name|borrower-last name|rental-date|rental-in-days
 
-public class FileRentalBookRepository implements RentalBookRepository{
-
-    private final String FILE_NAME_TO_BOOK_REPOSITORY = "src/main/resources/BookRepository.txt";
+public class FileRentalBookRepository implements RentalBookRepository {
 
     private final String FILE_NAME_TO_RENTAL_REPOSITORY = "src/main/resources/Rental.txt";
 
     private FileBookRepository fileBookRepository;
 
-    @Override
-    public void possibilityOfRental() {
-        fileBookRepository = new FileBookRepository(FILE_NAME_TO_BOOK_REPOSITORY);
-        try(Scanner scanner = new Scanner(new File(FILE_NAME_TO_BOOK_REPOSITORY))){
-            while(scanner.hasNext()){
-                String line = scanner.nextLine();
-                if(checkAvailable(line)){
-                  for(Book books: fileBookRepository.convertToBook(line))
-                      System.out.println(books);;
-                }
-            }
-        }catch (FileNotFoundException e){
-            System.out.println("File, not exist");
-        }
-    }
+    private UpdateBookStatus updateBookStatus;
+
 
     @Override
     public void viewsBorrowedBooks() {
         List<RentalInfo> viewRentalBooks = new ArrayList<>();
-
         viewRentalBooks.addAll(convertRentalList());
-
-        for(RentalInfo rentalInfo: viewRentalBooks) {
+        for (RentalInfo rentalInfo : viewRentalBooks) {
             System.out.println(rentalInfo);
             System.out.println();
         }
@@ -53,13 +41,13 @@ public class FileRentalBookRepository implements RentalBookRepository{
     @Override
     public void saveBorrowedBooks() {
         BookSelection bookSelection = new BookSelection();
-        UserSelection userSelection = new UserSelection();
-        RentalInfo rentalInfo = new RentalInfo(userSelection.createUserForBorrowedBook(),bookSelection.bookToBorrow());
+        UserAuthentication userAuthentication = new UserAuthentication();
+        RentalInfo rentalInfo = new RentalInfo(userAuthentication.getLoggedUser(), bookSelection.attemptBookBorrowing());
 
         if (rentalInfo.getUsers().getIdForRental().equals("error")
                 || rentalInfo.getUsers().getFirstName().equals("error")
                 || rentalInfo.getUsers().getLastName().equals("error")
-                || rentalInfo.getBook().getIsbn().equals("error"))  {
+                || rentalInfo.getBook().getIsbn().equals("error")) {
             System.out.println("Something went wrong");
         } else {
 
@@ -74,26 +62,27 @@ public class FileRentalBookRepository implements RentalBookRepository{
     }
 
     @Override
-    public void deleteReturnedBooks() {
-
-    }
-    private boolean checkAvailable (String bookAvailableInformation) {
-        String[] availableAboutBook = bookAvailableInformation.split(",");
-        if(availableAboutBook.length == 4) {
-            String availability = availableAboutBook[3].trim();
-            if(availability.equals("AVAILABLE")){
-                return true;
-            }
+    public void removeBookFromRentalRepository(String ISBN) {
+        updateBookStatus = new UpdateBookStatus();
+        try {
+            Files.write(
+                    Paths.get(FILE_NAME_TO_RENTAL_REPOSITORY),
+                    Files.lines(Paths.get(FILE_NAME_TO_RENTAL_REPOSITORY))
+                            .filter(line -> !line.contains(ISBN))
+                            .collect(Collectors.toList()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return false;
+        updateBookStatus.replaceBookStatus(ISBN);
     }
+
 
     private List<RentalInfo> convertToRentalInformation(String informationFromTheFile) {
-        fileBookRepository = new FileBookRepository(FILE_NAME_TO_BOOK_REPOSITORY);
+        fileBookRepository = new FileBookRepository();
         List<RentalInfo> rentalInfo = new ArrayList<>();
         String[] convertInformationFromTheFile = informationFromTheFile.split(",");
 
-        if(convertInformationFromTheFile.length == 8){
+        if (convertInformationFromTheFile.length == 8) {
             String isbn = convertInformationFromTheFile[0].trim();
             String author = convertInformationFromTheFile[1].trim();
             String title = convertInformationFromTheFile[2].trim();
@@ -108,8 +97,8 @@ public class FileRentalBookRepository implements RentalBookRepository{
 
             Status status = fileBookRepository.checkStatus(strStatus);
 
-            rentalInfo.add(new RentalInfo(new Users(id,userName,userLastName),
-                    (new Book(isbn,author,title,status)),
+            rentalInfo.add(new RentalInfo(new User(id, userName, userLastName),
+                    (new Book(isbn, author, title, status)),
                     date));
 
         }
@@ -118,19 +107,46 @@ public class FileRentalBookRepository implements RentalBookRepository{
 
     private List<RentalInfo> convertRentalList() {
         List<RentalInfo> borrowedBooks = new ArrayList<>();
-        try(Scanner scanner = new Scanner(new File(FILE_NAME_TO_RENTAL_REPOSITORY))){
-            while (scanner.hasNext()){
+        try (Scanner scanner = new Scanner(new File(FILE_NAME_TO_RENTAL_REPOSITORY))) {
+            while (scanner.hasNext()) {
                 String line = scanner.nextLine();
                 List<RentalInfo> rentalInfoList = convertToRentalInformation(line);
                 borrowedBooks.addAll(rentalInfoList);
             }
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("File not exist");
         }
         return borrowedBooks;
     }
 
-    }
+
+//    public List<String> loadRentalDataFromFile() {
+//        List<String> rentalList = new ArrayList<>();
+//        try (Scanner scanner = new Scanner(new File(FILE_NAME_TO_RENTAL_REPOSITORY))) {
+//            while (scanner.hasNext()) {
+//                String line = scanner.nextLine();
+//                rentalList.addAll(parseRentalInfoLine(line));
+//            }
+//        } catch (FileNotFoundException e) {
+//            System.out.println("File, not exist");
+//        }
+//
+//        return rentalList;
+//
+//    }
+//
+//    public List<String> parseRentalInfoLine(String rentalInfo) {
+//        List<String> isbnList = new ArrayList<>();
+//
+//        String[] arr = rentalInfo.split(",");
+//        if (rentalInfo.length() != 4) {
+//            String rentalISBN = arr[0].trim();
+//            isbnList.add(rentalISBN);
+//        }
+//        return isbnList;
+//    }
+
+}
 
 
 

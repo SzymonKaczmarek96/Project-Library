@@ -1,4 +1,6 @@
-package User;
+package Services;
+
+import Model.User;
 
 import java.io.*;
 import java.util.Scanner;
@@ -45,7 +47,7 @@ public class UserRegistrationHandler implements RegisterValidation {
     private String readLoginFromFile(String username) {
         String loginUser = "";
         String[] login = username.split(",");
-        if(login.length > 2){
+        if (login.length > 2) {
             loginUser = login[1].trim();
         }
         return loginUser;
@@ -53,29 +55,23 @@ public class UserRegistrationHandler implements RegisterValidation {
 
     @Override
     public boolean checkLogin(String username) {
-        if(loginCondition(username)){
-            return true;
-        }
-        return false;
+        return loginCondition(username);
     }
 
     @Override
     public boolean checkPassword(String password) {
-        if(passwordConditions(password)){
-            return true;
-        }
-        return false;
+        return passwordConditions(password);
     }
 
     @Override
-    public void savingUserToFile(Users users) {
+    public void savingUserToFile(User user) {
 
-        try(PrintWriter pw =  new PrintWriter(new FileWriter(fileName,true))){;
-            String saveUserInformation = users.convertUserToSave();
+        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
+            String saveUserInformation = user.convertUserToSave();
             pw.println(saveUserInformation);
             System.out.println("Data has been saved");
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("File not exist");
         }
     }
