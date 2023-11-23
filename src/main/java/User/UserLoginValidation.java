@@ -30,7 +30,6 @@ public class UserLoginValidation<K,V> implements LoginValidation,UserInfoProvide
     @Override
     public Map<K,V> addInformationAboutUsers() {
       userRepository = new HashMap<>();
-
         try(Scanner sc = new Scanner(new File(fileName))){
             while (sc.hasNext()){
                 String line = sc.nextLine();
@@ -50,7 +49,6 @@ public class UserLoginValidation<K,V> implements LoginValidation,UserInfoProvide
     public boolean checkLogin(String username){
         List userList = getKeys(userRepository);
         if(userList.contains(username)) {
-            ;
             return true;
         }
         return false;

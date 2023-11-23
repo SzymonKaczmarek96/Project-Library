@@ -42,8 +42,6 @@ public class UserRegistrationHandler implements RegisterValidation {
         return false;
     }
 
-
-
     private String readLoginFromFile(String username) {
         String loginUser = "";
         String[] login = username.split(",");

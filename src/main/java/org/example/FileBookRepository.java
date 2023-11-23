@@ -32,31 +32,21 @@ public class FileBookRepository implements BookRepository {
 
     @Override
     public List<Book> getAllBooks() {
-        Scanner scanner = null;
         List<Book> listOfAllBooks = new ArrayList<>();
-        try {
-            scanner = new Scanner(new File(fileName));
+        try(Scanner scanner = new Scanner(new File(fileName))) {
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
                 List<Book> books = convertToBook(line);
-
                 listOfAllBooks.addAll(books);
             }
 
         } catch (FileNotFoundException e) {
             System.out.println("File isn't exist");
-
-        }finally {
-            if(scanner != null){
-                scanner.close();
-
-            }
         }
-
         return listOfAllBooks;
     }
 
-    private List<Book> convertToBook(String bookInfo) {
+    public List<Book> convertToBook(String bookInfo) {
         List<Book> books = new ArrayList<>();
 
         String[] informationAboutBook = bookInfo.split(",");
@@ -74,7 +64,7 @@ public class FileBookRepository implements BookRepository {
         return books;
     }
 
-    private Status checkStatus(String informationAboutStatus) {
+    public Status checkStatus(String informationAboutStatus) {
 
         switch (informationAboutStatus) {
             case "AVAILABLE":

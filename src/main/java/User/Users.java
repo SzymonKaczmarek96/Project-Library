@@ -8,6 +8,8 @@ import java.util.*;
 public class Users {
     private int id;
 
+    private String idForRental;
+
     private String login;
 
     private String pass;
@@ -28,6 +30,13 @@ public class Users {
         this.lastName = lastName.toUpperCase();
         this.userStatus = UserStatus.STUDENT;
     }
+
+    public Users(String idForRental, String firstName, String lastName) {
+        this.idForRental = idForRental;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
 
     public int generateId(List<Integer> numberId){
 
@@ -61,7 +70,6 @@ public class Users {
         return idList;
         }
 
-
     private int checkIdInFile(String idInformation) {
         int userIdIntoList = 0;
         String[] id = idInformation.split(",");
@@ -76,16 +84,24 @@ public class Users {
         return String.format("%s,%s,%s,%s,%s,%s",id,login,pass,firstName,lastName,userStatus);
     }
 
+    public String getIdForRental() {
+        return idForRental;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     @Override
     public String toString() {
-        return "Users{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", pass='" + pass + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", userStatus=" + userStatus +
-                '}';
+        return idForRental + ',' +
+                firstName + ',' +
+                lastName
+               ;
     }
 }
 
