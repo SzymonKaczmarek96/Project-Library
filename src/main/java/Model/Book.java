@@ -1,10 +1,11 @@
-package org.example;
+package Model;
 
 public class Book {
     private final String isbn;
     private String author;
     private String title;
     private Status status;
+
     public Book(String isbn, String author, String title, Status status) {
         this.isbn = isbn;
         this.author = author;
@@ -16,25 +17,40 @@ public class Book {
         this.isbn = isbn;
         this.author = author;
         this.title = title;
-        this.status =Status.BORROWED;
+        this.status = Status.BORROWED;
     }
+
 
     public Book(String isbn) {
         this.isbn = isbn;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
     public String getIsbn() {
         return isbn;
     }
+
     public String convertBookToSave() {
         return String.format("%s,%s,%s,%s", isbn, author, title, status);
     }
-   @Override
-   public String toString() {
-       return
+
+    @Override
+    public String toString() {
+        return
                 isbn + ',' +
-                author + ',' +
-                title + ',' +
-                status  ;
+                        author + ',' +
+                        title + ',' +
+                        status;
     }
 }
