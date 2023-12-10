@@ -37,19 +37,6 @@ public class Library {
         }
     }
 
-    public void checkBookProperties(Book book) {
-        if (!exists(book)) {
-            if (book.getIsbn().length() == 9) {
-                bookRepository.saveBook(book);
-                System.out.println("Added");
-            } else {
-                System.out.println("ISBN number is too short or to long, remember isbn should have 9 numbers");
-            }
-        } else {
-            System.out.println("Such a book is in the repository");
-        }
-    }
-
     public boolean exists(Book book) {
         for (Book checkExistingBook : bookRepository.getAllBooks()) {
             if (checkExistingBook.getIsbn().equals(book.getIsbn())) {
@@ -81,21 +68,16 @@ public class Library {
         bookRepository.searchBook(introducedData);
     }
 
-    public void addBookToRepository() {
-        Book book = bookRepository.bookProperties();
-        checkBookProperties(book);
-    }
-
     public void regiUser() {
-        System.out.println("Register system: ");
-        System.out.println("User login must have between 3 and 15 signs");
-        System.out.println("Password must have between 5 and 18 signs");
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your login for registration: ");
-        String login = scanner.nextLine();
-        System.out.println("Enter your password: ");
-        String password = scanner.nextLine();
-        userApplication.registerUser(login, password);
+            System.out.println("Register system: ");
+            System.out.println("User login must have between 3 and 15 signs");
+            System.out.println("Password must have between 5 and 18 signs");
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter your login for registration: ");
+            String login = scanner.nextLine();
+            System.out.println("Enter your password: ");
+            String password = scanner.nextLine();
+            userApplication.registerUser(login, password);
     }
 
     public void removeBookWithLibrary() {
@@ -114,6 +96,38 @@ public class Library {
                     System.out.println("You don't have the proper authority");
                 };
             }
+    }
+    public void addBookToRepository() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Login: ");
+        String username = scanner.nextLine();
+        System.out.println("Password: ");
+        String password = scanner.nextLine();
+        if(userApplication.loginUser(username,password)){
+            if(userLoginValidation.checkUserStatus(username)){
+                System.out.println("Enter the ISBN of the book you are adding from the library: ");
+                String isbnForRemoveBookWithRepository = scanner.nextLine();
+                System.out.println("Enter author of book: ");
+                String author = scanner.nextLine().toUpperCase();
+                System.out.println("Enter title of book: ");
+                String titleOfBook = scanner.nextLine().toUpperCase();
+                checkBookProperties(new Book(isbnForRemoveBookWithRepository,author,titleOfBook,Status.AVAILABLE));
+            }else {
+                System.out.println("You don't have the proper authority");
+            }
+        }
+    }
+    private void checkBookProperties(Book book) {
+        if (!exists(book)) {
+            if (book.getIsbn().length() == 9) {
+                bookRepository.saveBook(book);
+                System.out.println("Added");
+            } else {
+                System.out.println("ISBN number is too short or to long, remember isbn should have 9 numbers");
+            }
+        } else {
+            System.out.println("Such a book is in the repository");
+        }
     }
 
 }

@@ -30,6 +30,7 @@ public class UserLoginValidation<K, V> implements LoginValidation, UserInfoProvi
             userRepository.put((K) username, (V) password);
         }
     }
+
     private List getKeys(Map map) {
         return new ArrayList<>(map.keySet());
     }
@@ -49,13 +50,13 @@ public class UserLoginValidation<K, V> implements LoginValidation, UserInfoProvi
         return null;
     }
 
-    public User informationAboutUser(String enterUsername){
+    public User informationAboutUser(String enterUsername) {
         String loadInformation = searchUser(enterUsername);
         String[] userInformation = loadInformation.split(",");
         String userID = userInformation[0].trim();
         String firstName = userInformation[3].trim();
         String lastName = userInformation[4].trim();
-        return new User(userID,firstName,lastName);
+        return new User(userID, firstName, lastName);
     }
 
     @Override
@@ -64,12 +65,11 @@ public class UserLoginValidation<K, V> implements LoginValidation, UserInfoProvi
         String[] userInformation = userStatusInformation.split(",");
         String status = userInformation[5].trim();
 
-        if(status.equals("ADMIN")){
+        if (status.equals("ADMIN")) {
             return true;
         }
         return false;
     }
-
 
     @Override
     public Map<K, V> addInformationAboutUsers() {

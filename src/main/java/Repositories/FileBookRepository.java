@@ -23,8 +23,6 @@ public class FileBookRepository implements BookRepository {
 
     private UserLoginValidation userLoginValidation;
 
-
-
     public FileBookRepository() {
         this.userApplication = new UserApplication();
         this.userLoginValidation = new UserLoginValidation();
@@ -32,6 +30,7 @@ public class FileBookRepository implements BookRepository {
 
     @Override
     public void saveBook(Book book) {
+
         try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_NAME, true))) {
             String saveBookInformation = book.convertBookToSave();
             pw.println(saveBookInformation);
@@ -128,13 +127,5 @@ public class FileBookRepository implements BookRepository {
         }
     }
 
-    private boolean checkAvailable(String bookAvailableInformation) {
-        String[] availableAboutBook = bookAvailableInformation.split(",");
-        if (availableAboutBook.length == 4) {
-            String availability = availableAboutBook[3].trim();
-            return availability.equals("AVAILABLE");
-        }
-        return false;
-    }
 
 }

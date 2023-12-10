@@ -35,26 +35,19 @@ public class FileRentalBookRepository implements RentalBookRepository {
             System.out.println(rentalInfo);
             System.out.println();
         }
-
     }
 
     @Override
     public void saveBorrowedBooks() {
         BookSelection bookSelection = new BookSelection();
         UserAuthentication userAuthentication = new UserAuthentication();
-        RentalInfo rentalInfo = new RentalInfo(userAuthentication.getLoggedUser(), bookSelection.attemptBookBorrowing());
-
-        if (rentalInfo.getUsers().getIdForRental().equals("error")
-                || rentalInfo.getUsers().getFirstName().equals("error")
-                || rentalInfo.getUsers().getLastName().equals("error")
-                || rentalInfo.getBook().getIsbn().equals("error")) {
-            System.out.println("Something went wrong");
+        if (userAuthentication.getLoggedUser() == null || bookSelection.attemptBookBorrowing() == null) {
+            System.out.println("Error, introduced data are invalid");
         } else {
-
+            RentalInfo rentalInfo = new RentalInfo(userAuthentication.getLoggedUser(), bookSelection.attemptBookBorrowing());
             try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_NAME_TO_RENTAL_REPOSITORY, true))) {
                 String saveRentalInformation = rentalInfo.convertRentalInfoToSave();
                 pw.println(saveRentalInformation);
-
             } catch (IOException e) {
                 System.out.println("File not exist");
             }
@@ -73,9 +66,8 @@ public class FileRentalBookRepository implements RentalBookRepository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        updateBookStatus.replaceBookStatus(ISBN);
+        updateBookStatus.replaceReturnedBookStatus(ISBN);
     }
-
 
     private List<RentalInfo> convertToRentalInformation(String informationFromTheFile) {
         fileBookRepository = new FileBookRepository();
@@ -118,36 +110,7 @@ public class FileRentalBookRepository implements RentalBookRepository {
         }
         return borrowedBooks;
     }
-
-
-//    public List<String> loadRentalDataFromFile() {
-//        List<String> rentalList = new ArrayList<>();
-//        try (Scanner scanner = new Scanner(new File(FILE_NAME_TO_RENTAL_REPOSITORY))) {
-//            while (scanner.hasNext()) {
-//                String line = scanner.nextLine();
-//                rentalList.addAll(parseRentalInfoLine(line));
-//            }
-//        } catch (FileNotFoundException e) {
-//            System.out.println("File, not exist");
-//        }
-//
-//        return rentalList;
-//
-//    }
-//
-//    public List<String> parseRentalInfoLine(String rentalInfo) {
-//        List<String> isbnList = new ArrayList<>();
-//
-//        String[] arr = rentalInfo.split(",");
-//        if (rentalInfo.length() != 4) {
-//            String rentalISBN = arr[0].trim();
-//            isbnList.add(rentalISBN);
-//        }
-//        return isbnList;
-//    }
-
 }
-
 
 
 

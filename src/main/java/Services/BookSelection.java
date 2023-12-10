@@ -1,7 +1,9 @@
 package Services;
 
+import Excaptions.InvalidBookException;
 import Model.Book;
 import Model.Library;
+import Model.Status;
 import Repositories.FileBookRepository;
 import Repositories.FileRentalBookRepository;
 
@@ -23,55 +25,69 @@ public class BookSelection {
 
     private final FileRentalBookRepository fileRentalBookRepository;
 
+    private boolean bookAvailable;
+
     public BookSelection() {
         this.library = new Library();
         this.fileBookRepository = new FileBookRepository();
         this.borrowedBook = borrowBook();
         this.updateBookStatus = new UpdateBookStatus();
         this.fileRentalBookRepository = new FileRentalBookRepository();
+        this.bookAvailable = false;
 
     }
 
-    public Book attemptBookBorrowing() {
-        if (borrowedBook.size() != 4) {
-            System.out.println("Invalid data");
-            return new Book("error");
-        }
+    public Book attemptBookBorrowing() throws InvalidBookException {
+
         String isbn = borrowedBook.get(0);
         String author = borrowedBook.get(1);
         String title = borrowedBook.get(2);
         String status = borrowedBook.get(3);
         System.out.println(status);
 
-        if (isbn == null || author.isBlank() || title.isBlank() || status.equals("BORROWED")) {
-            return new Book("error");
+        if (borrowedBook.isEmpty()) {
+            throw new InvalidBookException("The program wasn't find book");
         }
-        updateBookStatus.replaceBookStatus(isbn);
+        updateBookStatus.replaceBorrowedBookStatus(isbn);
         return new Book(isbn, author, title);
     }
 
     public List<String> borrowBook() {
         List<String> concludingBookList = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the book isbn number,what do you want to borrow");
-        String inputISBA = scanner.nextLine();
-
-        if (library.exists(new Book(inputISBA))) {
-            System.out.println("Book in repository");
-            concludingBookList.addAll(getBookInfoByISBN(inputISBA));
+        while (!bookAvailable) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the book isbn number,what do you want to borrow");
+            System.out.println("If you want to come back to the main menu, type 'back'");
+            String inputISBA = scanner.nextLine();
+            if(!inputISBA.equals("back")){
+            if (library.exists(new Book(inputISBA))) {
+                if (checkAvailableBook(inputISBA)) {
+                    System.out.println("Book is available");
+                    concludingBookList.addAll(getBookInfoByISBN(inputISBA));
+                    bookAvailable = true;
+                }
+            }
+        }else {
+                bookAvailable = true;
+                break;
+            }
         }
         return concludingBookList;
     }
 
     public List<String> getBookInfoByISBN(String transferIsbn) {
-        List<String> test4 = new ArrayList<>();
+        List<String> bookDetails = new ArrayList<>();
         Book book = findBookByISBN(transferIsbn);
-        test4.add(book.getIsbn());
-        test4.add(book.getAuthor());
-        test4.add(book.getTitle());
-        test4.add(String.valueOf(book.getStatus()));
-        System.out.println(test4);
-        return test4;
+        if (book.getStatus().equals(Status.AVAILABLE)){
+            bookDetails.add(book.getIsbn());
+            bookDetails.add(book.getAuthor());
+            bookDetails.add(book.getTitle());
+            bookDetails.add(String.valueOf(book.getStatus()));
+            System.out.println(bookDetails);
+        } else {
+            System.out.println("This book has been borrowed");
+        }
+        return bookDetails;
     }
 
     public Book findBookByISBN(String isbn) {
@@ -81,6 +97,13 @@ public class BookSelection {
         List<Book> test2 = bookStream.collect(Collectors.toList());
         Book book = test2.get(0);
         return book;
+    }
+
+    private boolean checkAvailableBook(String ISBN) {
+        if (getBookInfoByISBN(ISBN).isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
 }
